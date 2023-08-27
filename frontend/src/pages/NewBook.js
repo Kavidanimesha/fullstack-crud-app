@@ -1,4 +1,6 @@
+import axios from 'axios';
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const NewBook = () => {
 
@@ -8,6 +10,8 @@ const NewBook = () => {
     cover: ''
   })
 
+  const navigate = useNavigate()
+
   const handleChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
@@ -15,19 +19,26 @@ const NewBook = () => {
     setFormData({...formData , [name]: value})
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log(formData)
+    try{
+      console.log(formData)
+      await axios.post("http://localhost:8800/books", formData)
+      navigate("/")
+    }
+    catch(err) {
+      console.log(err)
+    }
   }
 
   return (
     <div>
-      <form method='post' onSubmit={handleSubmit}>
+      <form method='post'>
         <input type='text' name='title' value={formData.title} onChange={handleChange} placeholder='Title' />
         <input type='text' name='description' value={formData.description} onChange={handleChange} placeholder='Description' />
         <input type='text' name='cover' value={formData.cover} onChange={handleChange} placeholder='Cover' />
 
-        <button type='submit'> Save </button>
+        <button onClick={handleSubmit}> Save </button>
       </form>
     </div>
   )
